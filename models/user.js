@@ -72,5 +72,24 @@ userSchema.methods.generateAuthToken = async function() {
     return token
 }
 
+userSchema.statics.findByCrential = async (email, password) => {
+    const user = await User.findOne({ email })
+    
+    //normal new Error not work here
+    //we made a custom error 
+    function myError (message) {
+        this.message = message
+    }
+
+    myError.prototype = new Error()
+    
+    if(!user) throw new myError('Email Not Match')
+    
+    const isMatch = await bcrypt.compare(password, user.password)
+    if(!isMatch) throw new myError('Password Not Match')
+    
+    return user
+}
+
 const User = mongoose.model('user',userSchema)
 module.exports = User

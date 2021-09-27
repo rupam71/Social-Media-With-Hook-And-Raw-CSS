@@ -39,4 +39,16 @@ module.exports = app => {
             res.status(500).send('Server Error');
         }
     })
+
+    //login
+    app.post('/api/users/login',async (req,res)=>{
+        try{
+            // findByCrential custom made
+            const user = await User.findByCrential(req.body.email, req.body.password)
+            const token = await user.generateAuthToken()
+            res.status(201).send({ token })
+        } catch(e) {
+            res.status(400).send(e.message)
+        }
+    })
 }
