@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const userSchema = new mongoose.Schema({
     name: {
         type:String,
+        required:true,
         validate(value){
             if(value.length===0){
                 throw new Error ('Name Must Be Added')

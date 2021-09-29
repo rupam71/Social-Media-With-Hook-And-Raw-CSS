@@ -1,8 +1,7 @@
-const mongoose = require('mongoose')
 const User = require('../models/user')
 const gravatar = require('gravatar')
-const jwt = require('jsonwebtoken')
 const auth = require('../middleware/auth')
+const Profile = require('../models/profile')
 
 module.exports = app => {
     // sign up
@@ -24,7 +23,7 @@ module.exports = app => {
                 if(e.code) {
                     res.status(400).send("Email Already Used")
                 } else {
-                    res.status(400).send(e)
+                    res.status(400).send(Object.entries(e.errors)[0][1].message)
                 }
             }
     })
@@ -49,6 +48,24 @@ module.exports = app => {
             res.status(201).send({ token })
         } catch(e) {
             res.status(400).send(e.message)
+        }
+    })
+
+    // Delete user profile post
+    app.delete('/api/users/',auth, async (req, res) => {
+        try{
+            // Remove user post
+
+            
+            //Remode profile
+            await Profile.findOneAndRemove({user:req.user.id})
+            
+            //remove user account
+            await req.user.remove()
+            res.send({ msg:'User Remove' })
+        } catch (err) {
+            console.log(err.message)
+            res.status(500).send('Server Error');
         }
     })
 }

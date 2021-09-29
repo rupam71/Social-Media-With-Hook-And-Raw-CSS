@@ -19,6 +19,8 @@ app.use(express.json({extended:false}))
 app.get('/', (req,res) => res.send('API Running...'));
 
 require('./router/user')(app) //user routing
+require('./router/profile')(app) //profile routing
+require('./router/post')(app) //post routing
 
 const PORT = process.env.PORT || 5000;
 
