@@ -1,35 +1,45 @@
 import React, {useState} from "react";
-import axios from "axios";
-import { Link } from 'react-router-dom';
+// import axios from "axios";
+import { Link,Redirect } from 'react-router-dom';
+import {useDispatch,useSelector} from 'react-redux'
+import { login } from './../../actions/auth';
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector(state=>state.auth.isAuthenticated)
+
   const formOnChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
   const formOnSubmit = async (e) => {
       e.preventDefault()
-      console.log("Success", formData);
-      try {
-        const config = {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        };
-        const res = await axios.post("/api/users/login", formData, config);
-        //Here config is not needed. Beacase this is a public route.
-        console.log("Server: ", res.data);
-        setFormData({
-          email: "",
-          password: ""
-        });
-      } catch (error) {
-        console.error(error.response.data);
-      }
+      dispatch(login(formData))
+      // console.log("Success", formData);
+      // try {
+      //   const config = {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   };
+      //   const res = await axios.post("/api/users/login", formData, config);
+      //   //Here config is not needed. Beacase this is a public route.
+      //   console.log("Server: ", res.data);
+      //   setFormData({
+      //     email: "",
+      //     password: ""
+      //   });
+      // } catch (error) {
+      //   console.error(error.response.data);
+      // }
   };
   console.log(formData);
+
+  // Redirect If logged in
+  if(isAuthenticated) return <Redirect to="/dashboard" />
+
   return (
     <>
       <h1 className="large text-primary">Sign In</h1>
